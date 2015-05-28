@@ -2,8 +2,19 @@ function AI(grid) {
   this.grid = grid;
 }
 
+AI.prototype.getBest = function() {
+  return { move: this.getBestDirection() };
+}
+
+function AlphaBetaAI(grid) {
+  AI.call(this, grid);
+}
+
+AlphaBetaAI.prototype = Object.create(AI.prototype);
+AlphaBetaAI.prototype.constructor = AlphaBetaAI;
+
 // static evaluation function
-AI.prototype.eval = function() {
+AlphaBetaAI.prototype.eval = function() {
   var emptyCells = this.grid.availableCells().length;
 
   var smoothWeight = 0.1,
@@ -22,7 +33,7 @@ AI.prototype.eval = function() {
 };
 
 // alpha-beta depth first search
-AI.prototype.search = function(depth, alpha, beta, positions, cutoffs) {
+AlphaBetaAI.prototype.search = function(depth, alpha, beta, positions, cutoffs) {
   var bestScore;
   var bestMove = -1;
   var result;
@@ -37,12 +48,12 @@ AI.prototype.search = function(depth, alpha, beta, positions, cutoffs) {
         if (newGrid.isWin()) {
           return { move: direction, score: 10000, positions: positions, cutoffs: cutoffs };
         }
-        var newAI = new AI(newGrid);
+        var newAlphaBetaAI = new AlphaBetaAI(newGrid);
 
         if (depth == 0) {
-          result = { move: direction, score: newAI.eval() };
+          result = { move: direction, score: newAlphaBetaAI.eval() };
         } else {
-          result = newAI.search(depth-1, bestScore, beta, positions, cutoffs);
+          result = newAlphaBetaAI.search(depth-1, bestScore, beta, positions, cutoffs);
           if (result.score > 9900) { // win
             result.score--; // to slightly penalize higher depth from win
           }
@@ -100,8 +111,8 @@ AI.prototype.search = function(depth, alpha, beta, positions, cutoffs) {
       newGrid.insertTile(tile);
       newGrid.playerTurn = true;
       positions++;
-      newAI = new AI(newGrid);
-      result = newAI.search(depth, alpha, bestScore, positions, cutoffs);
+      newAlphaBetaAI = new AlphaBetaAI(newGrid);
+      result = newAlphaBetaAI.search(depth, alpha, bestScore, positions, cutoffs);
       positions = result.positions;
       cutoffs = result.cutoffs;
 
@@ -119,12 +130,12 @@ AI.prototype.search = function(depth, alpha, beta, positions, cutoffs) {
 }
 
 // performs a search and returns the best move
-AI.prototype.getBest = function() {
+AlphaBetaAI.prototype.getBest = function() {
   return this.iterativeDeep();
 }
 
 // performs iterative deepening over the alpha-beta search
-AI.prototype.iterativeDeep = function() {
+AlphaBetaAI.prototype.iterativeDeep = function() {
   var start = (new Date()).getTime();
   var depth = 0;
   var best;
@@ -140,11 +151,24 @@ AI.prototype.iterativeDeep = function() {
   return best
 }
 
-AI.prototype.translate = function(move) {
- return {
-    0: 'up',
-    1: 'right',
-    2: 'down',
-    3: 'left'
-  }[move];
+function UpRightDownRightAI(grid) {
+  AI.call(this, grid);
+  this.phase = 0;
 }
+
+UpRightDownRightAI.prototype = Object.create(AI.prototype);
+UpRightDownRightAI.prototype.constructor = UpRightDownRightAI;
+
+UpRightDownRightAI.prototype.getBestDirection = function () {
+  var  moves = [ [0,1,2,3],
+                 [1,2,0,3],
+                 [2,1,0,3],
+                 [1,0,2,3] ];
+  //console.log(this.phase);
+  var direction = this.grid.firstPossibleMove(moves[this.phase]);
+  //if (direction == moves[this.phase][0])
+    this.phase = (this.phase + 1) % 4;
+
+  return direction;
+}
+

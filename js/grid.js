@@ -577,6 +577,19 @@ Grid.prototype.isWin = function() {
   return false;
 }
 
+Grid.prototype.firstPossibleMove = function(moves) {
+  for (var direction of moves) {
+    var newGrid = this.clone();
+    if (newGrid.move(direction).moved) {
+      console.log(moves.toString() + ": " + direction);
+      return direction;
+    }
+  }
+
+  throw Error("No possible move: " + moves.toString());
+
+}
+
 //Grid.prototype.zobristTable = {}
 //for
 //Grid.prototype.hash = function() {
