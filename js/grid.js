@@ -581,7 +581,6 @@ Grid.prototype.firstPossibleMove = function(moves) {
   for (var direction of moves) {
     var newGrid = this.clone();
     if (newGrid.move(direction).moved) {
-      console.log(moves.toString() + ": " + direction);
       return direction;
     }
   }
