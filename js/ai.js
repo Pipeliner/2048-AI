@@ -182,12 +182,30 @@ UpRightDownRightAI.prototype.getBestDirection = function () {
 
 function MagicNetAI(grid) {
   AI.call(this, grid);
+  this.learning = true;
+  this.labels = [];
+  this.data = [];
 }
 
 MagicNetAI.prototype = Object.create(AI.prototype);
 MagicNetAI.prototype.constructor = MagicNetAI;
 
 MagicNetAI.prototype.learnMove = function(grid, move) {
-  return;
+  if (!this.learning)
+    console.log("This MagicNetAI is not accepting new data but learnMove() called");
+  this.data.push(new convnetjs.Vol(grid.cellsLog2Vector()));
+  this.labels.push(move.move);
+}
+
+MagicNetAI.prototype.getBestDirection = function() {
+  if (this.learning) {
+    this.learning = false;
+    this.net = new convnetjs.MagicNet(this.data, this.labels);
+  }
+
+  this.net.step(); //this is supposed to be called from infinite loop
+
+  return this.net.predict(new convnetjs.Vol(this.grid.cellsLog2Vector()));
+
 }
 

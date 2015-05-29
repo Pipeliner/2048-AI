@@ -589,6 +589,24 @@ Grid.prototype.firstPossibleMove = function(moves) {
 
 }
 
+Grid.prototype.cellsLog2Vector = function () {
+  var cells = [];
+  this.eachCell( function(x,y,tile) {
+    cells.push (tile == null ? 0 : Math.log2(tile.value));
+  });
+
+  return cells;
+}
+
+Grid.prototype.cellsVector = function () {
+  var cells = [];
+  this.eachCell( function(x,y,tile) {
+    cells.push (tile == null ? 0 : tile.value);
+  });
+
+  return cells;
+}
+
 //Grid.prototype.zobristTable = {}
 //for
 //Grid.prototype.hash = function() {
