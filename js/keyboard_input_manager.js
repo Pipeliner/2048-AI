@@ -66,7 +66,13 @@ KeyboardInputManager.prototype.listen = function () {
   runButton.addEventListener('click', function(e) {
     e.preventDefault();
     self.emit('run')
-  })
+  });
+
+  var changeButton = document.getElementById('change-button');
+  changeButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    self.emit('changeAI');
+  });
 
 
   // Listen to swipe events

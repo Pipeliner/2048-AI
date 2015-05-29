@@ -3,7 +3,13 @@ function AI(grid) {
 }
 
 AI.prototype.getBest = function() {
-  return { move: this.getBestDirection() };
+  var move = this.getBestDirection();
+  var alternativeMoves = convnetjs.randperm(4);
+  alternativeMoves.unshift(move);
+  var possibleMove = this.grid.firstPossibleMove(alternativeMoves);
+  //console.log(alternativeMoves);
+  //console.log(possibleMove);
+  return { move: possibleMove };
 }
 
 AI.prototype.getBestDirection = function() {
@@ -201,11 +207,11 @@ MagicNetAI.prototype.getBestDirection = function() {
   if (this.learning) {
     this.learning = false;
     this.net = new convnetjs.MagicNet(this.data, this.labels);
+    var trainSteps = 100;
+    for (var i = 0; i < trainSteps; i++)
+      this.net.step();
   }
 
-  this.net.step(); //this is supposed to be called from infinite loop
-
   return this.net.predict(new convnetjs.Vol(this.grid.cellsLog2Vector()));
-
 }
 

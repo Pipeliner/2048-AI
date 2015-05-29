@@ -25,9 +25,14 @@ function GameManager(size, InputManager, Actuator) {
     }
   }.bind(this));
 
-  this.learners = [new MagicNetAI()];
+  this.inputManager.on('changeAI', function() {
+    this.ai = this.learners[0];
+    this.ai.grid = this.grid;
+    this.learners = [];
+  }.bind(this));
 
   this.setup();
+  this.learners = [new MagicNetAI(this.grid)];
 }
 
 // Restart the game
@@ -43,7 +48,8 @@ GameManager.prototype.setup = function () {
   this.grid         = new Grid(this.size);
   this.grid.addStartTiles();
 
-  this.ai           = new UpRightDownRightAI(this.grid);
+  this.ai           = this.ai || new AlphaBetaAI(this.grid);
+  this.ai.grid      = this.grid;
 
   this.score        = 0;
   this.over         = false;
