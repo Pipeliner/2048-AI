@@ -25,6 +25,8 @@ function GameManager(size, InputManager, Actuator) {
     }
   }.bind(this));
 
+  this.learners = [new MagicNetAI()];
+
   this.setup();
 }
 
@@ -86,6 +88,8 @@ GameManager.prototype.move = function(direction) {
 // moves continuously until game is over
 GameManager.prototype.run = function() {
   var best = this.ai.getBest();
+  for (var learner of this.learners)
+    learner.learnMove(this.grid, best);
   this.move(best.move);
   var timeout = animationDelay;
   if (this.running && !this.over && !this.won) {

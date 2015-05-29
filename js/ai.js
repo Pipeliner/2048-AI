@@ -6,6 +6,14 @@ AI.prototype.getBest = function() {
   return { move: this.getBestDirection() };
 }
 
+AI.prototype.getBestDirection = function() {
+  throw Error("AI should implement getBest() or getBestDirection()");
+}
+
+AI.prototype.learnMove = function(grid, move) {
+  throw Error("This AI does not support learnMove() and so cannot not be a learner");
+}
+
 function AlphaBetaAI(grid) {
   AI.call(this, grid);
 }
@@ -170,5 +178,16 @@ UpRightDownRightAI.prototype.getBestDirection = function () {
     this.phase = (this.phase + 1) % 4;
 
   return direction;
+}
+
+function MagicNetAI(grid) {
+  AI.call(this, grid);
+}
+
+MagicNetAI.prototype = Object.create(AI.prototype);
+MagicNetAI.prototype.constructor = MagicNetAI;
+
+MagicNetAI.prototype.learnMove = function(grid, move) {
+  return;
 }
 
